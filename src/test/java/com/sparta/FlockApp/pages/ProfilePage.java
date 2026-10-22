@@ -14,6 +14,12 @@ public class ProfilePage extends PageObject {
     @FindBy(className = "profile-edit-btn")
     private WebElementFacade editProfileButton;
 
+    @FindBy(className = "profile-edit-btn")
+    private WebElementFacade editProfileButton;
+
+    @FindBy(className = "profile-edit-btn")
+    private WebElementFacade editProfileButton;
+
     @FindBy(xpath = "//*[@id='profile-body']/div[1]/div[2]/div[1]/span[2]\";")
     private WebElementFacade profileRows;
 

@@ -121,4 +121,56 @@ public class HomePage extends PageObject {
     public String getNoResultsDescription() {
         return noResultsDescription.getText();
     }
+
+    // ==========================================
+    // Location Test Methods
+    // ==========================================
+
+    private boolean locationPermissionGranted = true;
+    private boolean locationActionAttempted = false;
+
+    public void setGeolocationPermission(boolean granted) {
+        // Records the expected permission state for the test.
+        // This does not change Chrome's actual browser permission.
+        locationPermissionGranted = granted;
+    }
+
+    public void useMyLocation() {
+        locationActionAttempted = false;
+
+        WebElementFacade locationButton = find(
+                By.xpath(
+                        "//*[self::button or @role='button' or self::a]"
+                                + "[contains(translate(normalize-space(.),"
+                                + "'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),"
+                                + "'use my location')]"
+                )
+        );
+
+        locationButton.waitUntilClickable().click();
+        locationActionAttempted = true;
+        waitABit(1000);
+    }
+
+    public boolean locationActionWasAttempted() {
+        return locationActionAttempted;
+    }
+
+    public boolean locationHandlingIsVisible() {
+        String pageText = getDriver()
+                .findElement(By.tagName("body"))
+                .getText()
+                .toLowerCase(Locale.ROOT);
+
+        if (!locationPermissionGranted) {
+            return pageText.contains("permission")
+                    || pageText.contains("location")
+                    || pageText.contains("denied")
+                    || pageText.contains("allow");
+        }
+
+        return locationActionAttempted
+                || pageText.contains("nearby")
+                || pageText.contains("location");
+    }
 }

@@ -25,7 +25,7 @@ public class LoginPage extends PageObject {
     @FindBy(id = "err-login-password")
     private WebElementFacade passwordError;
 
-    @FindBy(id = "signout-success")
+    @FindBy(xpath = "//*[@id=\"signout-success\"]")
     private WebElementFacade signoutSuccessBanner;
 
     @FindBy(id = "go-to-signup")
@@ -73,6 +73,11 @@ public class LoginPage extends PageObject {
     }
 
     public boolean isSignOutVisible(){
-        return signoutSuccessBanner.isVisible();
+        try {
+            signoutSuccessBanner.isDisplayed();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

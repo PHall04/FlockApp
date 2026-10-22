@@ -1,5 +1,6 @@
 package com.sparta.FlockApp.steps;
 
+import com.sparta.FlockApp.pages.LoginPage;
 import com.sparta.FlockApp.pages.ProfilePage;
 import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
@@ -15,12 +16,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
+import static net.serenitybdd.core.Serenity.getDriver;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 
 @ExtendWith(SerenityJUnit5Extension.class)
 public class ProfileStepDefs {
     @Managed
     private ProfilePage profilePage;
+    private LoginPage loginPage;
 
     @Then("I open the profile page")
     public void iOpenTheProfilePage() {
@@ -104,11 +108,62 @@ public class ProfileStepDefs {
 
     @Then("the interest {string} should be selected")
     public void theInterestShouldBeSelected(String arg0) {
-        MatcherAssert.assertThat(profilePage.getSelectedInterestNames(), Matchers.hasItem(arg0));
+        MatcherAssert.assertThat(profilePage.getSelectedInterestNames(), hasItem(arg0));
     }
 
     @And("the Interests selected stat should increase by {int}")
     public void theInterestsSelectedStatShouldIncreaseBy(int arg0) {
         MatcherAssert.assertThat(profilePage.getInterestsSelected(), Matchers.equalTo(8));
+    }
+
+    @Then("the interest {string} should not be selected")
+    public void theInterestShouldNotBeSelected(String arg0) {
+        MatcherAssert.assertThat(profilePage.getSelectedInterestNames(), Matchers.not(hasItem(arg0)));
+    }
+
+    @And("the {string} stat should decrease by {int}")
+    public void theStatShouldDecreaseBy(String arg0, int arg1) {
+        MatcherAssert.assertThat(profilePage.getInterestsSelected(), Matchers.equalTo(6));
+    }
+
+    @And("I refresh the page")
+    public void iRefreshThePage() {
+        profilePage.getDriver().navigate().refresh();
+    }
+
+    @Then("{string} should be the active sidebar item")
+    public void shouldBeTheActiveSidebarItem(String itemName) {
+        MatcherAssert.assertThat(profilePage.getActiveSidebarItem(), Matchers.equalTo(itemName));
+    }
+
+    @When("I click {string} in the sidebar")
+    public void iClickInTheSidebar(String sidebarHeader) {
+        profilePage.clickSideBarItem(sidebarHeader);
+    }
+
+    @Then("I should be on the {string} page")
+    public void iShouldBeOnThePage(String title) {
+        MatcherAssert.assertThat(profilePage.getDriver().getTitle(), Matchers.equalTo("Flock - " + title));
+    }
+
+    @Then("I should see a popup message")
+    public void iShouldSeeAPopupMessage() {
+        MatcherAssert.assertThat(profilePage.isChatsPopupOpen(), Matchers.equalTo(true));
+    }
+
+    @When("I click Sign Out in the sidebar footer")
+    public void iClickSignOutInTheSidebarFooter() {
+        profilePage.clickSignOutButton();
+    }
+
+    @Then("I should be signed out")
+    public void iShouldBeSignedOut() {
+        getDriver().switchTo().alert().accept();
+        MatcherAssert.assertThat(loginPage.isSignOutVisible(), Matchers.equalTo(true));
+    }
+
+    @And("I should be on the login page")
+    public void iShouldBeOnTheLoginPage() {
+        MatcherAssert.assertThat(profilePage.getDriver().getCurrentUrl(), Matchers.equalTo("https://nishman89.github.io/flock/login.html"));
     }
 }

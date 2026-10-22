@@ -75,6 +75,18 @@ public class OnboardingPage extends PageObject {
         dateOfBirthField.type(dateOfBirth);
     }
 
+    public void clearFirstName() {
+        firstNameField.clear();
+    }
+
+    public void clearLastName() {
+        lastNameField.clear();
+    }
+
+    public void clearDateOfBirth() {
+        dateOfBirthField.clear();
+    }
+
     public String getFirstName() {
         return firstNameField.getValue();
     }
@@ -107,6 +119,18 @@ public class OnboardingPage extends PageObject {
         for (WebElementFacade chip : interestChips) {
             if (chip.getText().contains(interest)) {
                 chip.click();
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Interest not found: " + interest);
+    }
+
+    public void deselectInterest(String interest) {
+        for (WebElementFacade chip : interestChips) {
+            if (chip.getText().contains(interest)) {
+                if (chip.getAttribute("class").contains("selected")) {
+                    chip.click();
+                }
                 return;
             }
         }

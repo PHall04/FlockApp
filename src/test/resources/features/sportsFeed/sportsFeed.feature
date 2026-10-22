@@ -6,7 +6,7 @@ Feature: Filter Sports Feed on Home Page
   Background:
     Given I am on the FlockApp login page
     When I enter a valid email address
-    And I ender a valid password
+    And I enter a valid password
     And I click the login button
 
 

@@ -99,4 +99,12 @@ public class SignUpStepdefs {
                 Matchers.is(expectedError)
         );
     }
+
+    @Then("I should see the confirm password error {string}")
+    public void iShouldSeeTheConfirmPasswordError(String expectedError) {
+        MatcherAssert.assertThat(
+                signupPage.getConfirmPasswordError(),
+                Matchers.is(expectedError)
+        );
+    }
 }

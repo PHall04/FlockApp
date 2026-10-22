@@ -38,6 +38,9 @@ public class SignupPage extends PageObject {
     @FindBy(id = "err-signup-password")
     private WebElementFacade passwordError;
 
+    @FindBy(id = "err-signup-confirm")
+    private WebElementFacade confirmPasswordError;
+
     public void enterFirstName(String firstName){
         firstNameField.type(firstName);
     }
@@ -60,10 +63,6 @@ public class SignupPage extends PageObject {
 
     public void clickSignupButton(){
         signupSubmitButton.click();
-    }
-
-    public void clickLoginButton(){
-        loginButton.click();
     }
 
     public void enterAndSubmitFields(
@@ -91,5 +90,9 @@ public class SignupPage extends PageObject {
 
     public String getPasswordError(){
         return passwordError.getText();
+    }
+
+    public String getConfirmPasswordError() {
+        return confirmPasswordError.getText();
     }
 }

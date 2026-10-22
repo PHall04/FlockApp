@@ -27,7 +27,7 @@ public class LoginStepDefs {
         loginPage.enterUsername("nish");
     }
 
-    @And("I ender a valid password")
+    @And("I enter a valid password")
     public void iEnderAValidPassword() {
         loginPage.enterPassword("mandal");
     }

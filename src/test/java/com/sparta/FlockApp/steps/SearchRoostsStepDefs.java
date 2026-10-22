@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SerenityJUnit5Extension.class)
-public class SearchStepDefs {
+public class SearchRoostsStepDefs {
 
     @Managed
     private HomePage homePage;

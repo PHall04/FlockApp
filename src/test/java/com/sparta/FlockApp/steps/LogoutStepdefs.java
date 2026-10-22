@@ -2,6 +2,7 @@ package com.sparta.FlockApp.steps;
 
 import com.sparta.FlockApp.pages.HomePage;
 import com.sparta.FlockApp.pages.LoginPage;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -15,25 +16,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class LogoutStepdefs {
     @Managed
     private HomePage logoutPage;
-    @Managed
-    private LoginPage loginPage;
 
-    @Given("i am logged in on the flockApp")
-    public void theUserIsLoggedInOnTheFlockApp() {
-        loginPage.open();
-        loginPage.enterUsername("nish");
-        loginPage.enterPassword("mandal");
-        loginPage.clickLoginButton();
-    }
-
-    @When("i click the logout button on the current page")
-    public void theUserClicksTheLogoutButtonOnTheCurrentPage() {
+    @When("I click the logout button on the current page")
+    public void I_click_the_logout_button_on_the_current_page() {
         logoutPage.open();
         logoutPage.clickSignOutButton();
     }
 
-    @Then("i should be returned to the login page")
-    public void theUserShouldBeReturnedToTheLoginPage() {
+    @Then("I should be returned to the login page")
+    public void I_should_be_returned_to_the_login_page() {
         MatcherAssert.assertThat(logoutPage.getDriver().getCurrentUrl(), Matchers.is("https://nishman89.github.io/flock/login.html"));
     }
 }

@@ -5,9 +5,11 @@ Feature: Logout
   So that I can securely end my session.
 
   Background:
-    Given i am logged in on the flockApp
+    Given I am on the FlockApp login page
+    When I enter a valid email address
+    And I enter a valid password
+    And I click the login button
 
-
-  Scenario: Logged-in User
-    When i click the logout button on the current page
-    Then i should be returned to the login page
+Scenario:
+    When I click the logout button on the current page
+    Then I should be returned to the login page

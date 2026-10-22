@@ -16,6 +16,18 @@ public class LoginPage extends PageObject {
     @FindBy(id = "login-submit-btn")
     private WebElementFacade loginSubmitButton;
 
+    @FindBy(id = "login-error")
+    private WebElementFacade loginError;
+
+    @FindBy(id = "err-login-username")
+    private  WebElementFacade usernameError;
+
+    @FindBy(id = "err-login-password")
+    private WebElementFacade passwordError;
+
+    @FindBy(id = "signout-success")
+    private WebElementFacade signoutSuccessBanner;
+
     @FindBy(id = "go-to-signup")
     private WebElementFacade signupButton;
     public void enterUsername(String username){
@@ -40,4 +52,27 @@ public class LoginPage extends PageObject {
         clickLoginButton();
     }
 
+    public String getErrorMessage(){
+        return loginError.getText();
+    }
+
+    public String getUsernameError(){
+        return usernameError.getText();
+    }
+
+    public String getPasswordError(){
+        return passwordError.getText();
+    }
+
+    public void navigateBack(){
+        getDriver().navigate().back();
+    }
+
+    public void refreshPage(){
+        getDriver().navigate().refresh();
+    }
+
+    public boolean isSignOutVisible(){
+        return signoutSuccessBanner.isVisible();
+    }
 }

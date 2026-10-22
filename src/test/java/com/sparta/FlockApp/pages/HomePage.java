@@ -25,6 +25,11 @@ public class HomePage extends PageObject {
     @FindBy(id = "sidebar-signout-btn")
     private WebElementFacade signOutButton;
 
+    // ==========================================
+    // Logout Button
+    // ==========================================
+    @FindBy(id = "sidebar-signout-btn")
+    private WebElementFacade signOutButton;
 
     // ==========================================
     // Search & Container Elements
@@ -81,7 +86,12 @@ public class HomePage extends PageObject {
         return getDisplayedRoosts().size();
     }
 
-
+    // ==========================================
+    // Logout clicked
+    // ==========================================
+    public void clickSignOutButton(){
+        signOutButton.click();
+    }
     // ==========================================
     // Search Actions (Teammate methods preserved)
     // ==========================================

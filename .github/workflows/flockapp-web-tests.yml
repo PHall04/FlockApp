@@ -1,0 +1,51 @@
+name: FlockApp Web Tests
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+jobs:
+  ui-tests:
+    name: FlockApp Web Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # "mvn test" rather than "mvn verify": test failures are recorded in the
+      # report but do not fail the workflow (testFailureIgnore is true in
+      # pom.xml, and the serenity:check goal that fails the build is not run).
+      - name: Run tests
+        run: mvn -B clean test
+
+      - name: Build Serenity report
+        if: always()
+        run: mvn -B serenity:aggregate
+
+      - name: Add results to the run summary
+        if: always()
+        run: |
+          echo "## FlockApp test results" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat target/site/serenity/summary.txt >> "$GITHUB_STEP_SUMMARY" 2>/dev/null \
+            || echo "No summary found" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "Download the full report from the serenity-report artifact below." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Serenity report
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: serenity-report
+          path: target/site/serenity

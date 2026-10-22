@@ -1,4 +1,4 @@
-package com.nam.sparta.pages;
+package com.sparta.FlockApp.pages;
 
 import net.serenitybdd.core.pages.PageObject;
 import net.serenitybdd.core.pages.WebElementFacade;

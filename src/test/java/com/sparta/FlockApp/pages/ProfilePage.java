@@ -21,7 +21,7 @@ public class ProfilePage extends PageObject {
     @FindBy(className = "profile-edit-btn")
     private WebElementFacade editProfileButton;
 
-    @FindBy(className = "edit-profile-overlay")
+    @FindBy(xpath = "//*[@id=\"edit-profile-overlay\"]/div")
     private WebElementFacade editProfileOverlay;
 
     @FindBy(xpath = "//*[@id='profile-body']/div[1]/div[2]/div/span[2]")
@@ -39,8 +39,14 @@ public class ProfilePage extends PageObject {
     @FindBy(css = ".inline-chip.active")
     private List<WebElementFacade> selectedInterests;
 
+    @FindBy(css = ".sb-nav > *")
+    private List<WebElementFacade> sideNavBarItems;
+
     @FindBy(id= "signout-btn")
     private WebElementFacade signOutButton;
+
+    @FindBy(id= "sidebar-chats-close-btn")
+    private WebElementFacade chatsCloseButton;
 
 
 
@@ -73,7 +79,12 @@ public class ProfilePage extends PageObject {
     }
 
     public boolean isEditOverlayVisible() {
-        return editProfileOverlay.isVisible();
+        try {
+            editProfileOverlay.waitUntilVisible();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public void clickEditProfileButton() {
@@ -121,5 +132,28 @@ public class ProfilePage extends PageObject {
                 return;
             }
         }
+    }
+
+    public String getActiveSidebarItem() {
+        for (WebElementFacade navItem : sideNavBarItems) {
+            if (navItem.getAttribute("class").contains("active")) {
+                return navItem.getText();
+            }
+        }
+        return "";
+    }
+
+    public void clickSideBarItem(String item) {
+        for (WebElementFacade navItem : sideNavBarItems) {
+            System.out.println(navItem.getText());
+            if (navItem.getText().contains(item)) {
+                navItem.click();
+                return;
+            }
+        }
+    }
+
+    public boolean isChatsPopupOpen() {
+        return chatsCloseButton.isVisible();
     }
 }

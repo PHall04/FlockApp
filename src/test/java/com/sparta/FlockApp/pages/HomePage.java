@@ -22,6 +22,8 @@ public class HomePage extends PageObject {
 
     @FindBy(css = "div[data-cat='All']")
     private WebElementFacade allFilterButton;
+    @FindBy(id = "sidebar-signout-btn")
+    private WebElementFacade signOutButton;
 
 
     // ==========================================
@@ -172,5 +174,9 @@ public class HomePage extends PageObject {
         return locationActionAttempted
                 || pageText.contains("nearby")
                 || pageText.contains("location");
+    }
+
+    public void clickSignOutButton() {
+        signOutButton.waitUntilClickable().click();
     }
 }

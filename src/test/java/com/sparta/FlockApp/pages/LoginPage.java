@@ -16,6 +16,8 @@ public class LoginPage extends PageObject {
     @FindBy(id = "login-submit-btn")
     private WebElementFacade loginSubmitButton;
 
+    @FindBy(id = "go-to-signup")
+    private WebElementFacade signupButton;
     public void enterUsername(String username){
         userNameField.type(username);
     }
@@ -26,6 +28,10 @@ public class LoginPage extends PageObject {
 
     public void clickLoginButton(){
         loginSubmitButton.click();
+    }
+
+    public void clickSignupButton(){
+        signupButton.click();
     }
 
     public void enterAndSubmitFields(String username, String password){

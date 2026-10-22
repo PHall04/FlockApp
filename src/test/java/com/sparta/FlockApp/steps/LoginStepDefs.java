@@ -33,8 +33,8 @@ public class LoginStepDefs {
         loginPage.enterUsername("nish");
     }
 
-    @And("I ender a valid password")
-    public void iEnderAValidPassword() {
+    @And("I enter a valid password")
+    public void iEnterAValidPassword() {
         loginPage.enterPassword("mandal");
     }
 
@@ -61,5 +61,46 @@ public class LoginStepDefs {
     @And("I should remain on the login page")
     public void iShouldRemainOnTheLoginPage() {
         MatcherAssert.assertThat(loginPage.getDriver().getCurrentUrl(), Matchers.is("https://nishman89.github.io/flock/login.html"));
+    }
+
+    @When("I enter a empty email")
+    public void iEnterAEmptyEmail() {
+        loginPage.enterUsername("");
+    }
+
+    @And("I enter a empty password")
+    public void iEnterAEmptyPassword() {
+        loginPage.enterPassword("");
+    }
+
+    @Then("I should get an username error saying {string}")
+    public void iShouldGetAnUsernameErrorSaying(String usernameError) {
+        MatcherAssert.assertThat(loginPage.getUsernameError(), Matchers.is(usernameError));
+    }
+
+    @Then("I should get an password error saying {string}")
+    public void iShouldGetAnPasswordErrorSaying(String passwordError) {
+        MatcherAssert.assertThat(loginPage.getPasswordError(), Matchers.is(passwordError));
+    }
+
+    @When("I navigate back")
+    public void iNavigateBack() {
+        loginPage.navigateBack();
+    }
+
+
+    @And("I should not be told I have been logged out")
+    public void iShouldNotBeToldIHaveBeenLoggedOut() {
+        MatcherAssert.assertThat(loginPage.isSignOutVisible(), Matchers.is(false));
+    }
+
+    @When("I refresh")
+    public void iRefresh() {
+        loginPage.refreshPage();
+    }
+
+    @When("I enter a valid email which is {string}")
+    public void iEnterAValidEmailWhichIs(String username) {
+        loginPage.enterUsername(username);
     }
 }

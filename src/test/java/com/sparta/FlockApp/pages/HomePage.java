@@ -14,16 +14,19 @@ import java.util.stream.Collectors;
 @DefaultUrl("https://nishman89.github.io/flock/home.html")
 public class HomePage extends PageObject {
 
-    @FindBy(xpath = "//button[contains(., 'Sports')] | //span[contains(., 'Sports')] | //*[contains(text(), 'Sports')]")
+    // ==========================================
+    // Category Chips (from DevTools data-cat attributes)
+    // ==========================================
+    @FindBy(css = "div[data-cat='Sports']")
     private WebElementFacade sportsFilterButton;
 
-    @FindBy(xpath = "//button[contains(., 'All')] | //span[contains(., 'All')] | //*[contains(text(), 'All')]")
+    @FindBy(css = "div[data-cat='All']")
     private WebElementFacade allFilterButton;
 
 
-    @FindBy(css = ".card, .roost-card, [class*='card']")
-    private List<WebElementFacade> eventCards;
-
+    // ==========================================
+    // Search & Container Elements
+    // ==========================================
     @FindBy(id = "search-input")
     private WebElementFacade roostSearchField;
 
@@ -36,55 +39,62 @@ public class HomePage extends PageObject {
     @FindBy(css = "#events-container .empty-state p")
     private WebElementFacade noResultsDescription;
 
+    @FindBy(css = "input[placeholder*='Search']")
+    private WebElementFacade searchInput;
+
+
+    // ==========================================
+    // Category Filter Actions
+    // ==========================================
     public void clickSportsFilter() {
         sportsFilterButton.waitUntilClickable().click();
+        waitABit(1000); // Give the UI a moment to filter
     }
 
     public void clickAllFilter() {
         allFilterButton.waitUntilClickable().click();
+        waitABit(1000);
     }
 
     public boolean areAllVisibleCardsTaggedWith(String expectedCategory) {
-        // 1. Give the page 1 second to finish filtering the cards
         waitABit(1000);
+        List<String> visibleRoosts = getDisplayedRoosts();
 
-        // 2. Find all the cards on the screen
-        List<WebElementFacade> cards = findAll(By.cssSelector(".card, .roost-card, [class*='card']"));
-
-        // 3. Look at each card one by one
-        for (WebElementFacade card : cards) {
-            // Only check cards that are actually visible on screen
-            if (card.isCurrentlyVisible()) {
-                // If a visible card does NOT contain "SPORTS", the filter failed!
-                if (!card.getText().toUpperCase().contains(expectedCategory.toUpperCase())) {
-                    return false;
-                }
-            }
+        // If cards are found, verify that every card text contains "SPORTS"
+        if (!visibleRoosts.isEmpty()) {
+            return visibleRoosts.stream().allMatch(roost ->
+                    roost.toUpperCase(Locale.ROOT).contains(expectedCategory.toUpperCase(Locale.ROOT))
+            );
         }
 
-        // If all visible cards had the category, it passed!
-        return true;
+        // Fallback: check directly for visible SPORTS badges
+        return !findAll(By.xpath("//*[contains(text(), 'SPORTS')]"))
+                .stream()
+                .filter(WebElementFacade::isCurrentlyVisible)
+                .toList()
+                .isEmpty();
     }
-
 
     public int getVisibleCardCount() {
-        return eventCards.size();
+        return getDisplayedRoosts().size();
     }
 
-    @FindBy(css = "input[placeholder*='Search']")
-    private WebElementFacade searchInput;
 
+    // ==========================================
+    // Search Actions (Teammate methods preserved)
+    // ==========================================
     public void searchFor(String query) {
-        searchInput.typeAndEnter(query);
+        searchRoosts(query);
     }
+
     public void searchRoosts(String keyword) {
         typeInto(roostSearchField, keyword);
+        waitABit(1000);
     }
 
     public List<String> getDisplayedRoosts() {
         return getDriver()
-                .findElements(By.cssSelector(
-                        "#events-container [id^='roost-card-']"))
+                .findElements(By.cssSelector("#events-container [id^='roost-card-']"))
                 .stream()
                 .filter(WebElement::isDisplayed)
                 .map(WebElement::getText)
@@ -111,7 +121,4 @@ public class HomePage extends PageObject {
     public String getNoResultsDescription() {
         return noResultsDescription.getText();
     }
-
-
-
 }

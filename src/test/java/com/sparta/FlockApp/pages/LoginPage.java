@@ -16,6 +16,9 @@ public class LoginPage extends PageObject {
     @FindBy(id = "login-submit-btn")
     private WebElementFacade loginSubmitButton;
 
+    @FindBy(id = "login-error")
+    private WebElementFacade loginError;
+
     public void enterUsername(String username){
         userNameField.type(username);
     }
@@ -34,4 +37,7 @@ public class LoginPage extends PageObject {
         clickLoginButton();
     }
 
+    public String getErrorMessage(){
+        return loginError.getText();
+    }
 }

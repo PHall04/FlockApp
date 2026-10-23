@@ -105,16 +105,6 @@ public class OnboardingPage extends PageObject {
         throw new IllegalArgumentException("Avatar not found: " + avatar);
     }
 
-    public void enterPersonalDetails(
-            String firstName,
-            String lastName,
-            String dateOfBirth) {
-
-        enterFirstName(firstName);
-        enterLastName(lastName);
-        enterDateOfBirth(dateOfBirth);
-    }
-
     public void selectInterest(String interest) {
         for (WebElementFacade chip : interestChips) {
             if (chip.getText().contains(interest)) {
@@ -135,16 +125,6 @@ public class OnboardingPage extends PageObject {
             }
         }
         throw new IllegalArgumentException("Interest not found: " + interest);
-    }
-
-    public void selectFlock(String flockName) {
-        for (WebElementFacade flock : flockCards) {
-            if (flock.getText().contains(flockName)) {
-                flock.click();
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Flock not found: " + flockName);
     }
 
     public void selectCity(String city) {

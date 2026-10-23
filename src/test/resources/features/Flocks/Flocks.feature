@@ -7,7 +7,7 @@ Feature: Discover Flocks
     Given I am logged into FlockApp
     And I am on the FlockApp Flocks page
 
-  @Flocks @HappyPath
+  @Flocks @HappyPath @smoke
   Scenario: View available Flock categories
     Then I should see the following Flock categories:
       | All          |

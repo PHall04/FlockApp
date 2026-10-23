@@ -28,13 +28,6 @@ public class LocationStepDefs {
         wait.until(ExpectedConditions.elementToBeClickable(By.id("location-btn")));
     }
 
-//    @Given ("Target Location is clickable")
-//    public void locationIsClickable(){
-//        WebDriverWait wait = new WebDriverWait(loginPage.getDriver(), Duration.ofSeconds(15));
-//        wait.until(ExpectedConditions.urlToBe("https://nishman89.github.io/flock/home.html"));
-//        wait.until(ExpectedConditions.elementToBeClickable(By.id("location-btn")));
-//    }
-
     @Given("browser geolocation permission is granted")
     public void browserGeolocationPermissionIsGranted() {
         homePage.setGeolocationPermission(true);

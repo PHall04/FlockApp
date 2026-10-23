@@ -1,0 +1,59 @@
+name: FlockApp Web Tests
+
+#   dev  -> @smoke scenarios only
+#   main -> every scenario except those tagged @ignore
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [main, dev]
+  workflow_dispatch:      # manual runs use the rule for the branch selected
+
+jobs:
+  ui-tests:
+    name: FlockApp Web Tests
+    runs-on: ubuntu-latest
+
+    env:
+      # base_ref is the target branch of a pull request; ref_name is the branch
+      # pushed to (base_ref is empty for pushes and manual runs).
+      TEST_TAGS: ${{ (github.base_ref || github.ref_name) == 'main' && 'not @ignore' || '@smoke' }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      # "mvn test" rather than "mvn verify": test failures are recorded in the
+      # report but do not fail the workflow (testFailureIgnore is true in
+      # pom.xml, and the serenity:check goal that fails the build is not run).
+      - name: Run tests (${{ env.TEST_TAGS }})
+        run: mvn -B clean test -Dcucumber.filter.tags="$TEST_TAGS"
+
+      - name: Build Serenity report
+        if: always()
+        run: mvn -B serenity:aggregate
+
+      - name: Add results to the run summary
+        if: always()
+        run: |
+          echo "## FlockApp test results" >> "$GITHUB_STEP_SUMMARY"
+          echo "Tags run: \`$TEST_TAGS\`" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat target/site/serenity/summary.txt >> "$GITHUB_STEP_SUMMARY" 2>/dev/null \
+            || echo "No summary found" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "Download the full report from the serenity-report artifact below." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Serenity report
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: serenity-report
+          path: target/site/serenity

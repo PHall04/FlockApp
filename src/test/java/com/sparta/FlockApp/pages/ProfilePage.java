@@ -48,6 +48,14 @@ public class ProfilePage extends PageObject {
     @FindBy(id= "sidebar-chats-close-btn")
     private WebElementFacade chatsCloseButton;
 
+    @FindBy(id= "ep-first")
+    private WebElementFacade firstNameField;
+
+    @FindBy(id= "ep-last")
+    private WebElementFacade lastNameField;
+
+    @FindBy(xpath = "//*[@id=\'edit-profile-overlay\']/div/button")
+    private WebElementFacade confirmEditButton;
 
 
     public String getProfileName() {
@@ -156,4 +164,18 @@ public class ProfilePage extends PageObject {
     public boolean isChatsPopupOpen() {
         return chatsCloseButton.isVisible();
     }
+
+    public void setNewFirstName(String firstName) {
+        firstNameField.clear();
+        firstNameField.sendKeys(firstName);
+    }
+    public void setNewLastName(String lastName) {
+        lastNameField.clear();
+        lastNameField.sendKeys(lastName);
+    }
+
+    public void confirmEdit() {
+        confirmEditButton.click();
+    }
+
 }

@@ -17,8 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.util.List;
 
 import static net.serenitybdd.core.Serenity.getDriver;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.*;
 
 @ExtendWith(SerenityJUnit5Extension.class)
 public class ProfileStepDefs {
@@ -165,5 +164,21 @@ public class ProfileStepDefs {
     @And("I should be on the login page")
     public void iShouldBeOnTheLoginPage() {
         MatcherAssert.assertThat(profilePage.getDriver().getCurrentUrl(), Matchers.equalTo("https://nishman89.github.io/flock/login.html"));
+    }
+
+    @And("I enter {string} and {string}")
+    public void iEnterAnd(String first, String last) {
+        profilePage.setNewFirstName(first);
+        profilePage.setNewLastName(last);
+    }
+
+    @And("I click to confirm")
+    public void iClickToConfirm() {
+        profilePage.confirmEdit();
+    }
+
+    @Then("my account page should show {string} and {string}")
+    public void myAccountPageShouldShowAnd(String first, String last) {
+        MatcherAssert.assertThat(profilePage.getProfileName().replace(" ", ""), Matchers.containsString(first + last));
     }
 }

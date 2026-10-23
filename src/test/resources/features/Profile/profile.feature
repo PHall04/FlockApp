@@ -18,11 +18,6 @@ Feature: User profile
     And I should see the profile details "26 years old · London"
     And I should see the "✎ Edit profile" button
 
-  Scenario: Open Edit Form
-    When I click ✎ Edit profile
-    Then the edit profile form should be displayed
-
-
   Scenario: Flocks and interests updates
     Then the Flocks joined stat should be 4 🎉
     And the Interests selected stat should be 7
@@ -109,3 +104,22 @@ Feature: User profile
     When I click Sign Out in the sidebar footer
     Then I should be signed out
     And I should be on the login page
+
+  Scenario: Open Edit Form
+    When I click ✎ Edit profile
+    Then the edit profile form should be displayed
+
+  Scenario Outline: Edit Profile Updates
+      When I click ✎ Edit profile
+      Then the edit profile form should be displayed
+      And I enter "<firstname>" and "<lastname>"
+      And I click to confirm
+      Then my account page should show "<firstname>" and "<lastname>"
+
+      Examples:
+        | firstname     | lastname      |
+        | Nish    | Mandal    |
+        | Paul    | Hall  |
+        | Wen | zhu |
+        | zuhaib |  |
+

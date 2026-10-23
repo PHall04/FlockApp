@@ -30,6 +30,7 @@ public class LocationStepDefs {
 
     @Given("browser geolocation permission is granted")
     public void browserGeolocationPermissionIsGranted() {
+        homePage.open();
         homePage.setGeolocationPermission(true);
     }
 

@@ -1,3 +1,4 @@
+@About
 Feature: About Flock
   As a new or existing user
   I want to read information about Flock

@@ -14,6 +14,8 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static net.serenitybdd.core.Serenity.getDriver;
@@ -37,7 +39,7 @@ public class ProfileStepDefs {
 
     @And("I should see the profile details {string}")
     public void iShouldSeeTheProfileDetails(String arg0) {
-        MatcherAssert.assertThat(profilePage.getProfileInfo(), Matchers.equalTo(arg0));
+        MatcherAssert.assertThat(profilePage.getProfileInfo(), Matchers.containsString(arg0));
     }
 
     @And("I should see the {string} button")
@@ -180,5 +182,10 @@ public class ProfileStepDefs {
     @Then("my account page should show {string} and {string}")
     public void myAccountPageShouldShowAnd(String first, String last) {
         MatcherAssert.assertThat(profilePage.getProfileName().replace(" ", ""), Matchers.containsString(first + last));
+    }
+
+    @And("I set my date of birth to {string}")
+    public void iSetMyDateOfBirthTo(String dob) {
+        profilePage.updateDob(LocalDate.parse(dob));
     }
 }

@@ -148,10 +148,19 @@ mvn clean verify
 Run only the scenarios with a given tag:
 
 ```
-mvn clean verify -Dcucumber.filter.tags="@profile"
+mvn clean verify -Dcucumber.filter.tags="@Profile"
 ```
 
-Tags can be combined, for example `"@login and not @wip"`.
+Tags can be combined, for example `"@Login and @SadPath"` or `"@smoke and not @ignore"`.
+
+Tag conventions (tags are case-sensitive):
+
+| Tag | Where | Meaning |
+|---|---|---|
+| `@About`, `@Flocks`, `@Location`, `@Login`, `@Logout`, `@Onboarding`, `@Profile`, `@Search`, `@SignUp`, `@SportsFeed` | Once, above `Feature:` | The area of the app; applies to every scenario in the file |
+| `@HappyPath` / `@SadPath` | Every scenario (or Examples table) | Expected behaviour vs. invalid input or error handling |
+| `@smoke` | One or two core scenarios per feature | Run on every change to `dev` |
+| `@ignore` | Any scenario or feature | Excluded from `main` runs |
 
 Run via IntelliJ IDEA:
 
@@ -182,10 +191,86 @@ To share the report, zip the whole `target/site/serenity` folder. `index.html` o
 
 Tests run automatically on GitHub Actions using the workflow in `.github/workflows/flockapp-web-tests.yml`.
 
-- **Triggers**: every push to `main`, every pull request into `main`, and manually via the Run workflow button in the Actions tab.
-- **Environment**: Ubuntu runner, JDK 21 (Temurin), headless Chrome.
-- **Command**: `mvn -B clean verify`
-- **Report**: the Serenity report is uploaded as a build artifact named `serenity-report` on every run, including failed runs. Download it from the run's Summary page, unzip it and open `index.html`.
+### When tests run, and which ones
+
+Which scenarios run depends on the branch the change is going into, whether it arrives by pull request or by a direct push or merge:
+
+| Target branch | Triggered by | Scenarios run |
+|---|---|---|
+| `dev` | Pull request into `dev`, or push/merge to `dev` | Only scenarios tagged `@smoke` |
+| `main` | Pull request into `main`, or push/merge to `main` | All scenarios except those tagged `@ignore` |
+
+Tests can also be started manually from the Actions tab with the Run workflow button. Manual runs follow the rule for the branch selected in the dropdown.
+
+Tagging conventions:
+
+- Tag one or two key scenarios in each feature `@smoke`. Tags are case-sensitive, so `@Smoke` is not picked up.
+- Tag a scenario, or a whole feature file, `@ignore` to exclude it from `main` runs (for example, work in progress or a test blocked by a known defect).
+- See the full tag conventions table under Running Tests.
+
+### How the workflow works
+
+The workflow has one job, `FlockApp Web Tests`, which runs on a fresh Ubuntu machine provided by GitHub. Each run follows the same sequence.
+
+**1. Trigger.** The `on:` section starts the workflow for pull requests and pushes targeting `main` or `dev`, and for manual runs (`workflow_dispatch`).
+
+**2. Choose the tests.** Before any steps run, the job sets one environment variable, `TEST_TAGS`:
+
+```yaml
+TEST_TAGS: ${{ (github.base_ref || github.ref_name) == 'main' && 'not @ignore' || '@smoke' }}
+```
+
+- `github.base_ref` is the target branch of a pull request. It is empty for pushes and manual runs, so the expression falls back to `github.ref_name`, the branch that was pushed to or selected.
+- If that branch is `main`, `TEST_TAGS` becomes `not @ignore`. For any other branch, including `dev`, it becomes `@smoke`.
+
+**3. Steps.**
+
+| Step | What it does |
+|---|---|
+| Check out code | Downloads the repository at the commit being tested (for a pull request, the result of merging it into the target branch) |
+| Set up JDK 21 | Installs Java 21 (Temurin) and caches Maven dependencies, so later runs skip most downloads |
+| Run tests | Runs `mvn -B clean test -Dcucumber.filter.tags="$TEST_TAGS"`. The step name shows which tags were used |
+| Build Serenity report | Runs `mvn -B serenity:aggregate` to turn the test results into the HTML report |
+| Add results to the run summary | Writes the tags used and the pass/fail totals (from `summary.txt`) to the run's Summary page |
+| Upload Serenity report | Uploads `target/site/serenity` as the `serenity-report` artifact |
+
+The last three steps have `if: always()`, so they run even if an earlier step fails. A report and summary are produced whenever there are any results to report.
+
+**4. Pass or fail.** The workflow uses `mvn test` rather than `mvn verify` on purpose. `pom.xml` sets `testFailureIgnore` to `true`, and `mvn test` stops before the `serenity:check` goal, which would otherwise fail the build when any test fails.
+
+### Pass and fail status
+
+- **Environment**: Ubuntu runner, JDK 21 (Temurin), headless Chrome. The matching ChromeDriver is downloaded automatically by WebDriverManager.
+- A failing test does **not** turn the workflow run red. Test results are recorded in the report instead, so a green run means the suite ran and a report was produced. A red run means something stopped the tests from running at all, such as a compile error or a missing dependency.
+
+To reproduce a CI run locally:
+
+```
+mvn clean test -Dcucumber.filter.tags="@smoke"
+mvn clean test -Dcucumber.filter.tags="not @ignore"
+mvn serenity:aggregate
+```
+
+The first command matches a `dev` run and the second a `main` run; follow either with `serenity:aggregate` to build the report.
+
+### Changing the workflow
+
+- **Run different tests on a branch**: edit the `TEST_TAGS` expression. For example, `'@smoke or @Login'` for `dev` adds all login scenarios to smoke runs.
+- **Add a branch**: add it to both `branches` lists under `on:`. It will run `@smoke` unless the `TEST_TAGS` expression is changed to treat it like `main`.
+- **Fail the run when tests fail**: change the Run tests command to `mvn -B clean verify` (keeping the tag filter). The `serenity:check` goal will then mark the run as failed, which allows branch protection to block merges with failing tests.
+
+### Viewing the latest test report
+
+Every run uploads the Serenity report as a downloadable artifact, including runs where tests failed.
+
+1. Open the repository on GitHub and select the **Actions** tab.
+2. Select **FlockApp Web Tests** in the left-hand list of workflows.
+3. Open the most recent run at the top of the list. To see the latest full regression results, use the **Branch** filter to pick `main`; for the latest smoke results, pick `dev`.
+4. The run's **Summary** page shows the tags that were run and the pass/fail totals, without downloading anything.
+5. Scroll down to **Artifacts** and select **serenity-report** to download it as a zip file.
+6. Unzip the file and open `index.html` in a browser. Keep all the unzipped files together, as `index.html` links to the rest of the folder.
+
+Artifacts are kept for 90 days, after which they are deleted by GitHub. To keep a report for longer, download it and store it elsewhere.
 
 ## 7. What Was Tested
 

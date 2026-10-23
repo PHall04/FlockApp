@@ -1,3 +1,4 @@
+@Logout
 Feature: Logout
 
   As a logged-in user,
@@ -10,6 +11,7 @@ Feature: Logout
     And I enter a valid password
     And I click the login button
 
-Scenario:
+  @HappyPath @smoke
+  Scenario: Log out from the current page
     When I click the logout button on the current page
     Then I should be returned to the login page

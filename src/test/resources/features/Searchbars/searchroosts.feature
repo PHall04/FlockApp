@@ -1,3 +1,4 @@
+@Search
 Feature: Search for Roosts
   As a signed-in user
   I want to search Roosts by keyword
@@ -10,7 +11,7 @@ Feature: Search for Roosts
     And I click the login button
     Then I should be redirected to the home page
 
-  @HappyPath
+  @HappyPath @smoke
   Scenario: Find Roosts by keyword
     When I search for "Derby"
     Then I should see Roosts matching "Derby"

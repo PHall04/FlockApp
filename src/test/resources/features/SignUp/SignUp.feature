@@ -1,3 +1,4 @@
+@SignUp
 Feature: User Registration
   As a new FlockApp user
   I want to create an account
@@ -8,7 +9,7 @@ Feature: User Registration
     When I click the sign up link
     Then I should be redirected to the signup page
 
-  @SignUp @HappyPath @smoke
+  @HappyPath @smoke
   Scenario: Successfully create an account with valid details
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -18,7 +19,7 @@ Feature: User Registration
     And I click the Create Account button
     Then my account should be created successfully
 
-  @SignUp @HappyPath
+  @HappyPath
   Scenario: Successfully register without a last name
     When I enter "John" as my first name
     And I enter "johnwithoutlast" as my username
@@ -27,7 +28,7 @@ Feature: User Registration
     And I click the Create Account button
     Then my account should be created successfully
 
-  @SignUp @HappyPath
+  @HappyPath
   Scenario: Successfully register with a mixed-case username
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -37,7 +38,7 @@ Feature: User Registration
     And I click the Create Account button
     Then my account should be created successfully
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register with all fields empty
     When I click the Create Account button
     Then my account should not be created
@@ -45,7 +46,7 @@ Feature: User Registration
     And I should see the username error "Username must be at least 3 characters"
     And I should see the password error "Password must be at least 6 characters"
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register without a first name
     When I enter "Smith" as my last name
     And I enter "johnsmith999" as my username
@@ -55,7 +56,7 @@ Feature: User Registration
     Then my account should not be created
     And I should see the first name error "Please enter your first name"
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register with mismatched passwords
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -66,7 +67,7 @@ Feature: User Registration
     Then my account should not be created
     And I should see the confirm password error "Passwords do not match"
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register without confirming the password
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -78,7 +79,7 @@ Feature: User Registration
 
   # USERNAME VALIDATION TESTING
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register with spaces in the username
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -89,7 +90,7 @@ Feature: User Registration
     Then my account should not be created
     And I should see the username error "No spaces allowed in username"
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register with an existing username
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -100,7 +101,7 @@ Feature: User Registration
     Then my account should not be created
     And I should see the username error "That username is already taken - try another"
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register with an existing username in uppercase
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -115,7 +116,7 @@ Feature: User Registration
 
   # First Name Boundary: Minimum 2 characters
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register with a one-character first name
     When I enter "J" as my first name
     And I enter "Smith" as my last name
@@ -127,7 +128,7 @@ Feature: User Registration
     And I should see the first name error "Please enter your first name"
 
 
-  @SignUp @HappyPath
+  @HappyPath
   Scenario: Successfully register with a two-character first name
     When I enter "Jo" as my first name
     And I enter "Smith" as my last name
@@ -139,7 +140,7 @@ Feature: User Registration
 
   # Username Boundary: Minimum 3 characters
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register with a username that is too short
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -150,7 +151,7 @@ Feature: User Registration
     Then my account should not be created
     And I should see the username error "Username must be at least 3 characters"
 
-  @SignUp @HappyPath
+  @HappyPath
   Scenario: Successfully register with a three-character username
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -162,7 +163,7 @@ Feature: User Registration
 
   # Password Boundary: Minimum 6 characters
 
-  @SignUp @SadPath
+  @SadPath
   Scenario: Attempt to register with a password that is too short
     When I enter "John" as my first name
     And I enter "Smith" as my last name
@@ -173,7 +174,7 @@ Feature: User Registration
     Then my account should not be created
     And I should see the password error "Password must be at least 6 characters"
 
-  @SignUp @HappyPath
+  @HappyPath
   Scenario: Successfully register with a six-character password
     When I enter "John" as my first name
     And I enter "Smith" as my last name

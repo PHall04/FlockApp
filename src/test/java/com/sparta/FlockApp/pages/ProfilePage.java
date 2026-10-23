@@ -6,6 +6,8 @@ import net.thucydides.core.annotations.DefaultUrl;
 import net.serenitybdd.core.annotations.findby.FindBy;
 import org.openqa.selenium.By;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +58,9 @@ public class ProfilePage extends PageObject {
 
     @FindBy(xpath = "//*[@id=\'edit-profile-overlay\']/div/button")
     private WebElementFacade confirmEditButton;
+
+    @FindBy(id = "ep-dob")
+    private WebElementFacade dobField;
 
 
     public String getProfileName() {
@@ -178,4 +183,11 @@ public class ProfilePage extends PageObject {
         confirmEditButton.click();
     }
 
+    public void updateDob(LocalDate date) {
+        dobField.clear();
+        dobField.sendKeys(date.format(DateTimeFormatter.ofPattern("ddMMyyyy")));
+    }
+    public String getDob() {
+        return dobField.getValue();
+    }
 }

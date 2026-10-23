@@ -1,3 +1,4 @@
+@Location
 Feature: Home page location-based discovery
   As a signed in user
   I want to discover Roosts based on my location

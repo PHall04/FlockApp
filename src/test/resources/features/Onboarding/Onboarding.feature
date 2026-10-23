@@ -8,7 +8,7 @@ Feature: User Onboarding
     When I register a new account with first name "John" and last name "Smith"
     Then I should be redirected to the onboarding page
 
-  @Onboarding @HappyPath
+  @Onboarding @HappyPath @smoke
   Scenario: Successfully complete the onboarding process
     Then my first name should be "John"
     And my last name should be "Smith"

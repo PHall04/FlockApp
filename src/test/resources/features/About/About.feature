@@ -3,7 +3,7 @@ Feature: About Flock
   I want to read information about Flock
   So that I can understand how Flocks and Roosts work
 
-  @HappyPath
+  @HappyPath @smoke
   Scenario: Access the About page as a guest
     Given I am on the FlockApp login page
     When I click the What is Flock link

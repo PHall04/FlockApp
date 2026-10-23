@@ -18,15 +18,15 @@ public class LocationStepDefs {
     private HomePage homePage;
     private LoginPage loginPage;
 
-//    @Given("the user is logged in on the flockApp")
-//    public void theUserIsLoggedInOnTheFlockApp() {
-//        loginPage.open();
-//        loginPage.enterAndSubmitFields("nish", "mandal");
-//
-//        WebDriverWait wait = new WebDriverWait(loginPage.getDriver(), Duration.ofSeconds(15));
-//        wait.until(ExpectedConditions.urlToBe("https://nishman89.github.io/flock/home.html"));
-//        wait.until(ExpectedConditions.elementToBeClickable(By.id("location-btn")));
-//    }
+    @Given("the user is logged in on the flockApp for use of location and clickable")
+    public void theUserIsLoggedInOnTheFlockApp() {
+        loginPage.open();
+        loginPage.enterAndSubmitFields("nish", "mandal");
+
+        WebDriverWait wait = new WebDriverWait(loginPage.getDriver(), Duration.ofSeconds(3));
+        wait.until(ExpectedConditions.urlToBe("https://nishman89.github.io/flock/home.html"));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("location-btn")));
+    }
 
     @Given("browser geolocation permission is granted")
     public void browserGeolocationPermissionIsGranted() {

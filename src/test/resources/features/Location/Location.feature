@@ -4,7 +4,10 @@ Feature: Home page location-based discovery
   So that I can find relevant activities and gatherings nearby
 
   Background:
-    Given the user is logged in on the flockApp
+    Given I am on the FlockApp login page
+    When I enter a valid email address
+    And I enter a valid password
+    And I click the login button
 
   @HappyPath
   Scenario: Use location-based discovery

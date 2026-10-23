@@ -6,6 +6,7 @@ Feature: User Login
   Background:
     Given I am on the FlockApp login page
 
+  @smoke
 Scenario: Successful login attempt
   When I enter a valid email address
   And I enter a valid password

@@ -8,7 +8,7 @@ Feature: User Registration
     When I click the sign up link
     Then I should be redirected to the signup page
 
-  @SignUp @HappyPath
+  @SignUp @HappyPath @smoke
   Scenario: Successfully create an account with valid details
     When I enter "John" as my first name
     And I enter "Smith" as my last name

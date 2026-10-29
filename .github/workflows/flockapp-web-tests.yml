@@ -2,12 +2,20 @@ name: FlockApp Web Tests
 
 #   dev  -> @smoke scenarios only
 #   main -> every scenario except those tagged @ignore
+#   push to main -> if every test passes, deploy site/ to GitHub Pages
+#
+# Tests always run against the copy of the site in site/, served locally
+# on the runner, so the code being tested is the code that gets deployed.
 on:
   pull_request:
     branches: [main, dev]
   push:
     branches: [main, dev]
-  workflow_dispatch:      # manual runs use the rule for the branch selected
+  workflow_dispatch:
+  # manual runs use the rule for the branch selected
+
+permissions:
+  contents: read
 
 jobs:
   ui-tests:
@@ -15,9 +23,16 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # base_ref is the target branch of a pull request; ref_name is the branch
-      # pushed to (base_ref is empty for pushes and manual runs).
-      TEST_TAGS: ${{ (github.base_ref || github.ref_name) == 'main' && 'not @ignore' || '@smoke' }}
+      # Scenarios tagged @defect are left out of the gated run and run
+      # separately afterwards, so they appear in the report without blocking
+      # deployment.
+      TEST_TAGS: ${{ (github.base_ref || github.ref_name) == 'main' && 'not @ignore and not @defect' || '@smoke and not @defect' }}
+      DEFECT_TAGS: '@defect and not @ignore'
+      # The site is served at http://localhost:8080/flock/ so paths match the
+      # live site (.../flock/login.html). Serenity swaps the host part of every
+      # @DefaultUrl for webdriver.base.url; Urls.BASE reads flock.base.url.
+      SITE_HOST: http://localhost:8080
+      SITE_BASE: http://localhost:8080/flock/
 
     steps:
       - name: Check out code
@@ -30,11 +45,48 @@ jobs:
           java-version: '21'
           cache: maven
 
+      # A background process started in a step keeps running for the rest of
+      # the job, so the site stays up while the tests run.
+      - name: Serve site locally
+        run: |
+          mkdir -p "$RUNNER_TEMP/www"
+          cp -r site "$RUNNER_TEMP/www/flock"
+          python3 -m http.server 8080 --directory "$RUNNER_TEMP/www" > "$RUNNER_TEMP/http.log" 2>&1 &
+          for i in $(seq 1 20); do
+            if curl -sf "${SITE_BASE}login.html" > /dev/null; then
+              echo "Site is up at ${SITE_BASE}"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Local site did not start"
+          cat "$RUNNER_TEMP/http.log"
+          exit 1
+
       # "mvn test" rather than "mvn verify": test failures are recorded in the
-      # report but do not fail the workflow (testFailureIgnore is true in
-      # pom.xml, and the serenity:check goal that fails the build is not run).
+      # report but do not fail this step (testFailureIgnore is true in pom.xml).
+      # Whether failures block deployment is decided by the "Check results" step.
       - name: Run tests (${{ env.TEST_TAGS }})
-        run: mvn -B clean test -Dcucumber.filter.tags="$TEST_TAGS"
+        run: >
+          mvn -B clean test
+          -Dcucumber.filter.tags="$TEST_TAGS"
+          -Dwebdriver.base.url="$SITE_HOST"
+          -Dflock.base.url="$SITE_BASE"
+
+      - name: Check results (blocks deployment on failure)
+        id: gate
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: mvn -B serenity:aggregate serenity:check
+
+      # No "clean" here, so these results are added to the ones above and both
+      # appear in one report. Failures are expected and do not fail the run.
+      - name: Run known defects (${{ env.DEFECT_TAGS }})
+        if: always()
+        run: >
+          mvn -B test
+          -Dcucumber.filter.tags="$DEFECT_TAGS"
+          -Dwebdriver.base.url="$SITE_HOST"
+          -Dflock.base.url="$SITE_BASE"
 
       - name: Build Serenity report
         if: always()
@@ -44,7 +96,9 @@ jobs:
         if: always()
         run: |
           echo "## FlockApp test results" >> "$GITHUB_STEP_SUMMARY"
-          echo "Tags run: \`$TEST_TAGS\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Gated tags: \`$TEST_TAGS\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Known defects (not gated): \`$DEFECT_TAGS\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Deployment gate: ${{ steps.gate.outcome || 'not run on this branch' }}" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           cat target/site/serenity/summary.txt >> "$GITHUB_STEP_SUMMARY" 2>/dev/null \
             || echo "No summary found" >> "$GITHUB_STEP_SUMMARY"
@@ -57,3 +111,38 @@ jobs:
         with:
           name: serenity-report
           path: target/site/serenity
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: ui-tests
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write      # publish to Pages
+      id-token: write   # verify deployment came from this workflow
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # One deployment at a time.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

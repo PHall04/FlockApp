@@ -1,5 +1,6 @@
 package com.sparta.FlockApp.pages;
 
+import com.sparta.FlockApp.config.Urls;
 import net.serenitybdd.core.pages.WebElementFacade;
 import net.thucydides.core.annotations.DefaultUrl;
 import net.serenitybdd.core.annotations.findby.FindBy;
@@ -9,8 +10,7 @@ import org.openqa.selenium.JavascriptExecutor;
 @DefaultUrl("https://nishman89.github.io/flock/about.html")
 public class AboutPage extends PageObject {
 
-    private static final String BASE_URL =
-            "https://nishman89.github.io/flock/";
+    private static final String BASE_URL = Urls.BASE;
 
     @FindBy(id = "login-about-link")
     private WebElementFacade loginAboutLink;

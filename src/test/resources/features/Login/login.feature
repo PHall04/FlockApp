@@ -68,7 +68,7 @@ Feature: User Login
     Then I should get an username error saying "Please enter your username"
     And I should remain on the login page
 
-  @HappyPath
+  @HappyPath @defect
   Scenario: navigating backwards should redirect me to the homepage
     When I enter a valid email address
     And I enter a valid password

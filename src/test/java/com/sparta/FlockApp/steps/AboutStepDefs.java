@@ -1,5 +1,6 @@
 package com.sparta.FlockApp.steps;
 
+import com.sparta.FlockApp.config.Urls;
 import com.sparta.FlockApp.pages.AboutPage;
 import com.sparta.FlockApp.pages.LoginPage;
 import io.cucumber.java.en.Given;
@@ -31,7 +32,7 @@ public class AboutStepDefs {
         MatcherAssert.assertThat(
                 loginPage.getDriver().getCurrentUrl(),
                 Matchers.is(
-                        "https://nishman89.github.io/flock/home.html"
+                        Urls.BASE + "home.html"
                 )
         );
     }

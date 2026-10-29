@@ -1,5 +1,6 @@
 package com.sparta.FlockApp.steps;
 
+import com.sparta.FlockApp.config.Urls;
 import com.sparta.FlockApp.pages.LoginPage;
 import io.cucumber.java.PendingException;
 import io.cucumber.java.en.And;
@@ -45,7 +46,7 @@ public class LoginStepDefs {
 
     @Then("I should be redirected to the home page")
     public void iShouldBeRedirectedToTheHomePage() {
-        MatcherAssert.assertThat(loginPage.getDriver().getCurrentUrl(), Matchers.is("https://nishman89.github.io/flock/home.html"));
+        MatcherAssert.assertThat(loginPage.getDriver().getCurrentUrl(), Matchers.is(Urls.BASE + "home.html"));
     }
 
     @When("I enter a valid email but the password is {string}")
@@ -60,7 +61,7 @@ public class LoginStepDefs {
 
     @And("I should remain on the login page")
     public void iShouldRemainOnTheLoginPage() {
-        MatcherAssert.assertThat(loginPage.getDriver().getCurrentUrl(), Matchers.is("https://nishman89.github.io/flock/login.html"));
+        MatcherAssert.assertThat(loginPage.getDriver().getCurrentUrl(), Matchers.is(Urls.BASE + "login.html"));
     }
 
     @When("I enter a empty email")

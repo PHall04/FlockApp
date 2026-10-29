@@ -1,5 +1,6 @@
 package com.sparta.FlockApp.steps;
 
+import com.sparta.FlockApp.config.Urls;
 import com.sparta.FlockApp.pages.LoginPage;
 import com.sparta.FlockApp.pages.SignupPage;
 
@@ -27,7 +28,7 @@ public class SignUpStepdefs {
     public void iShouldBeRedirectedToTheSignupPage() {
         MatcherAssert.assertThat(
                 signupPage.getDriver().getCurrentUrl(),
-                Matchers.is("https://nishman89.github.io/flock/signup.html")
+                Matchers.is(Urls.BASE + "signup.html")
         );
     }
 
@@ -65,7 +66,7 @@ public class SignUpStepdefs {
     public void myAccountShouldBeCreatedSuccessfully() {
         MatcherAssert.assertThat(
                 signupPage.getDriver().getCurrentUrl(),
-                Matchers.is("https://nishman89.github.io/flock/onboarding.html")
+                Matchers.is(Urls.BASE + "onboarding.html")
         );
     }
 
@@ -73,7 +74,7 @@ public class SignUpStepdefs {
     public void myAccountShouldNotBeCreated() {
         MatcherAssert.assertThat(
                 signupPage.getDriver().getCurrentUrl(),
-                Matchers.is("https://nishman89.github.io/flock/signup.html")
+                Matchers.is(Urls.BASE + "signup.html")
         );
     }
 

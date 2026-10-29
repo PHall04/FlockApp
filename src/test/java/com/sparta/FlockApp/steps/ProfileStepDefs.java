@@ -1,5 +1,6 @@
 package com.sparta.FlockApp.steps;
 
+import com.sparta.FlockApp.config.Urls;
 import com.sparta.FlockApp.pages.LoginPage;
 import com.sparta.FlockApp.pages.ProfilePage;
 import io.cucumber.java.PendingException;
@@ -165,7 +166,7 @@ public class ProfileStepDefs {
 
     @And("I should be on the login page")
     public void iShouldBeOnTheLoginPage() {
-        MatcherAssert.assertThat(profilePage.getDriver().getCurrentUrl(), Matchers.equalTo("https://nishman89.github.io/flock/login.html"));
+        MatcherAssert.assertThat(profilePage.getDriver().getCurrentUrl(), Matchers.equalTo(Urls.BASE + "login.html"));
     }
 
     @And("I enter {string} and {string}")

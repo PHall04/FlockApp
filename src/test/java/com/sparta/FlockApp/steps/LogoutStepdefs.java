@@ -1,5 +1,6 @@
 package com.sparta.FlockApp.steps;
 
+import com.sparta.FlockApp.config.Urls;
 import com.sparta.FlockApp.pages.HomePage;
 import com.sparta.FlockApp.pages.LoginPage;
 import io.cucumber.java.en.And;
@@ -25,6 +26,6 @@ public class LogoutStepdefs {
 
     @Then("I should be returned to the login page")
     public void I_should_be_returned_to_the_login_page() {
-        MatcherAssert.assertThat(logoutPage.getDriver().getCurrentUrl(), Matchers.is("https://nishman89.github.io/flock/login.html"));
+        MatcherAssert.assertThat(logoutPage.getDriver().getCurrentUrl(), Matchers.is(Urls.BASE + "login.html"));
     }
 }

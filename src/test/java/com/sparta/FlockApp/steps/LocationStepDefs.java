@@ -2,6 +2,7 @@ package com.sparta.FlockApp.steps;
 
 import com.sparta.FlockApp.pages.HomePage;
 import com.sparta.FlockApp.pages.LoginPage;
+import com.sparta.FlockApp.config.Urls;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -24,7 +25,7 @@ public class LocationStepDefs {
         loginPage.enterAndSubmitFields("nish", "mandal");
 
         WebDriverWait wait = new WebDriverWait(loginPage.getDriver(), Duration.ofSeconds(3));
-        wait.until(ExpectedConditions.urlToBe("https://nishman89.github.io/flock/home.html"));
+        wait.until(ExpectedConditions.urlToBe(Urls.BASE + "home.html"));
         wait.until(ExpectedConditions.elementToBeClickable(By.id("location-btn")));
     }
 
